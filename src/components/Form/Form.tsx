@@ -1,12 +1,34 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Card, Autocomplete, TextField, Stack, styled, Button } from '@mui/material'
-import { BrandResponse } from 'src/types'
+import { BrandResponse, ModelResponse } from 'src/types'
+import { getModelsByBrand, getYearsByModel } from 'src/service'
+import { useAppDispatch, useAppSelector } from 'src/store/hooks'
+import { updateModel } from 'src/store/Slice'
 
 type FormProps = {
   brands: BrandResponse[]
 }
 
+type Options = {
+  label: string
+  code: string
+}
+
 export const Form: React.FC<FormProps> = ({ brands }) => {
+  const [iseLoading, setIsLoading] = useState(false)
+  const [brand, setBrand] = useState<Options | undefined>()
+  const [model, setModel] = useState<Options | undefined>()
+  const [year, setYear] = useState<Options | undefined>()
+
+  const dispatch = useAppDispatch()
+  const { modelos, anos } = useAppSelector((state) => state.vehicle)
+
+  const getModel = async (brand: string) => {
+    setIsLoading(true)
+    const result = await getModelsByBrand(brand)
+    dispatch(updateModel(result))
+    setIsLoading(false)
+  }
 
   const top100Films = [
     { label: 'The Shawshank Redemption', year: 1994 },
@@ -26,6 +48,8 @@ export const Form: React.FC<FormProps> = ({ brands }) => {
     return brands.map((brand) => ({ label: brand.nome, code: brand.codigo }))
   }, [brands])
 
+  const modelData = useMemo(() => modelos.map((model) => ({ label: model.nome, code: model.codigo })), [modelos])
+
   return (
     <Card sx={{ marginTop: 4 }}>
       <FormContainer spacing={4}>
@@ -35,15 +59,24 @@ export const Form: React.FC<FormProps> = ({ brands }) => {
           id='combo-box-demo'
           options={brandData}
           sx={{ width: 350 }}
+          value={brand}
+          onChange={(event: any, newValue: Options) => {
+            getModel(newValue.code)
+            setBrand(newValue)
+          }}
           renderInput={(params) => <TextField {...params} label='Marca' />}
         />
         <Autocomplete
           disableClearable
           disablePortal
           id='combo-box-demo'
-          options={top100Films}
+          options={modelData}
           sx={{ width: 350 }}
-          renderInput={(params) => <TextField {...params} label='Movie' />}
+          value={model}
+          onChange={(event: any, newValue: Options) => {
+            setModel(newValue)
+          }}
+          renderInput={(params) => <TextField {...params} label='Modelo' />}
         />
         <Autocomplete
           disableClearable
