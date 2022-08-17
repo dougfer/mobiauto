@@ -1,29 +1,31 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { RootState } from '../store'
-import { BrandResponse, ModelResponse } from 'src/types'
+
+type State = {
+  brand: string
+  model: string
+  year: string
+  value: string
+}
 
 const initialState = {
-  anos: [],
-  modelos: []
-} as ModelResponse
+  brand: '',
+  model: '',
+  year: ''
+} as State
 
 export const vehicleSlice = createSlice({
   name: 'counter',
   initialState,
   reducers: {
-    updateModel: (state, action: PayloadAction<ModelResponse>) => {
-      state.anos = action.payload.anos
-      state.modelos = action.payload.modelos
+    updateCarInfo: (state, action: PayloadAction<State>) => {
+      Object.assign(state, action.payload)
     },
-    updateYear: (state, action: PayloadAction<BrandResponse>) => {
-      // state.year.push(action.payload)
-    },
+
   },
 })
 
-// Action creators are generated for each case reducer function
-export const { updateModel, updateYear } = vehicleSlice.actions
+export const { updateCarInfo } = vehicleSlice.actions
 
 // export const selectCount = (state: RootState) => state.vehicle
 

@@ -1,13 +1,9 @@
-import React, { useEffect } from 'react'
-import type { InferGetServerSidePropsType } from 'next'
+import React from 'react'
 import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import { Typography, Stack, Card, styled, alpha } from '@mui/material'
 import { Form } from 'src/components'
 import { getBrands } from 'src/service'
-
-
+import type { InferGetServerSidePropsType } from 'next'
+import { Typography, Stack, styled, alpha } from '@mui/material'
 
 const Home = ({ brands }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
 
